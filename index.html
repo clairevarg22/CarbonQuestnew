@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>CarbonQuest</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#f2f6f5;
+text-align:center;
+}
+
+.container{
+background:white;
+width:420px;
+margin:auto;
+padding:20px;
+border-radius:10px;
+box-shadow:0px 4px 10px rgba(0,0,0,0.1);
+}
+
+input{
+padding:8px;
+margin:6px;
+width:80%;
+}
+
+button{
+padding:10px 16px;
+background:#2e8b57;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.result{
+margin-top:20px;
+font-size:18px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>CarbonQuest 🌍</h1>
+<p>Track the carbon footprint of your digital life</p>
+
+<div class="container">
+
+<h3>Enter Daily Usage</h3>
+
+<input id="streaming" placeholder="Streaming hours"><br>
+<input id="ai" placeholder="AI queries"><br>
+<input id="cloud" placeholder="Cloud storage (GB)"><br>
+<input id="gaming" placeholder="Gaming hours"><br>
+
+<button onclick="calculate()">Calculate</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<script>
+
+function calculate(){
+
+let streaming = document.getElementById("streaming").value;
+let ai = document.getElementById("ai").value;
+let cloud = document.getElementById("cloud").value;
+let gaming = document.getElementById("gaming").value;
+
+let carbon =
+(streaming*55) +
+(ai*4) +
+(cloud*2) +
+(gaming*75);
+
+let ecoScore = Math.max(0,100-carbon/10);
+
+document.getElementById("result").innerHTML =
+"Daily Carbon: " + carbon + " g CO2<br>" +
+"Eco Score: " + ecoScore;
+
+}
+
+</script>
+
+</body>
+</html>
