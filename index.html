@@ -5,17 +5,19 @@
 
 <title>CarbonQuest</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
 
-/* LOGIN SCREEN */
+/* GENERAL */
 
 body{
 margin:0;
-font-family:Courier New (monospace);
+font-family:'Orbitron', monospace;
 color:white;
 }
 
-/* earth background */
+/* LOGIN SCREEN */
 
 #loginScreen{
 height:100vh;
@@ -29,20 +31,26 @@ background-position:center;
 
 .loginBox{
 text-align:center;
+background:rgba(0,0,0,0.6);
+padding:40px;
+border-radius:15px;
 }
 
 .loginBox input{
 padding:12px;
 font-size:16px;
 width:220px;
+border-radius:6px;
+border:none;
 }
 
 .loginBox button{
 padding:12px 20px;
 margin-top:10px;
 background:#27ae60;
+border:none;
 border-radius:10px;
-color:none;
+color:white;
 cursor:pointer;
 }
 
@@ -55,9 +63,16 @@ min-height:100vh;
 padding:30px;
 }
 
+#userDisplay{
+position:absolute;
+top:20px;
+left:20px;
+font-size:18px;
+}
+
 .dashboardGrid{
 display:grid;
-grid-template-columns: 60% 40%;
+grid-template-columns:60% 40%;
 gap:20px;
 }
 
@@ -71,17 +86,18 @@ border-radius:10px;
 box-shadow:0 10px 20px rgba(0,0,0,0.3);
 }
 
-input{
+.panel input{
 padding:8px;
 margin:5px;
 }
 
-button{
+.panel button{
 padding:8px 14px;
 background:#27ae60;
 border:none;
 color:white;
 cursor:pointer;
+border-radius:6px;
 }
 
 /* CHALLENGE CALENDAR */
@@ -99,7 +115,7 @@ border-radius:6px;
 text-align:center;
 }
 
-/* POPUP */
+/* POPUPS */
 
 .popup{
 position:fixed;
@@ -118,6 +134,7 @@ background:white;
 color:black;
 padding:30px;
 border-radius:10px;
+text-align:center;
 }
 
 </style>
@@ -132,15 +149,19 @@ border-radius:10px;
 
 <div class="loginBox">
 
-<h1>🌍 CarbonQuest</h1>
+<h1>CarbonQuest</h1>
 
-<h3>Enter Username</h3>
+<input id="usernameInput" placeholder="Username">
+<br><br>
 
-<input id="usernameInput">
+<input id="passwordInput" type="password" placeholder="Password">
+<br><br>
 
-<br>
+<button onclick="login()">Enter</button>
 
-<button onclick="start()">Start</button>
+<br><br>
+
+<button onclick="openCreateAccount()">Create Account</button>
 
 </div>
 
@@ -149,6 +170,8 @@ border-radius:10px;
 <!-- DASHBOARD -->
 
 <div id="dashboard">
+
+<div id="userDisplay"></div>
 
 <h1>CarbonQuest Dashboard</h1>
 
@@ -225,8 +248,29 @@ border-radius:10px;
 <br><br>
 
 <button onclick="addFriend()">Add</button>
-
 <button onclick="closeFriendPopup()">Close</button>
+
+</div>
+
+</div>
+
+<!-- CREATE ACCOUNT POPUP -->
+
+<div class="popup" id="createPopup">
+
+<div class="popupBox">
+
+<h3>Create Account</h3>
+
+<input id="newUsername" placeholder="Create Username">
+<br><br>
+
+<input id="newPassword" type="password" placeholder="Create Password">
+
+<br><br>
+
+<button onclick="createAccount()">Enter</button>
+<button onclick="closeCreateAccount()">Close</button>
 
 </div>
 
@@ -237,15 +281,62 @@ border-radius:10px;
 let username=""
 let scores=[]
 let friends=[]
+let users={}
 
-function start(){
+/* LOGIN */
 
-username=document.getElementById("usernameInput").value
+function login(){
+
+let user=document.getElementById("usernameInput").value
+let pass=document.getElementById("passwordInput").value
+
+if(users[user] && users[user]==pass){
+
+username=user
 
 document.getElementById("loginScreen").style.display="none"
 document.getElementById("dashboard").style.display="block"
 
+document.getElementById("userDisplay").innerHTML="User: "+username
+
 }
+else{
+
+alert("Account not found. Create one.")
+
+}
+
+}
+
+/* CREATE ACCOUNT */
+
+function openCreateAccount(){
+document.getElementById("createPopup").style.display="flex"
+}
+
+function closeCreateAccount(){
+document.getElementById("createPopup").style.display="none"
+}
+
+function createAccount(){
+
+let newUser=document.getElementById("newUsername").value
+let newPass=document.getElementById("newPassword").value
+
+users[newUser]=newPass
+
+username=newUser
+
+closeCreateAccount()
+
+document.getElementById("loginScreen").style.display="none"
+document.getElementById("dashboard").style.display="block"
+
+document.getElementById("userDisplay").innerHTML="User: "+username
+
+}
+
+/* CARBON CALCULATOR */
 
 function calculate(){
 
@@ -285,16 +376,14 @@ document.getElementById("leaderboard").innerHTML=list
 
 }
 
+/* FRIEND SYSTEM */
+
 function openFriendPopup(){
-
 document.getElementById("friendPopup").style.display="flex"
-
 }
 
 function closeFriendPopup(){
-
 document.getElementById("friendPopup").style.display="none"
-
 }
 
 function addFriend(){
@@ -316,6 +405,8 @@ document.getElementById("friends").innerHTML=list
 closeFriendPopup()
 
 }
+
+/* CHALLENGE */
 
 function startChallenge(){
 
