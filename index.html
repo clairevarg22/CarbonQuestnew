@@ -7,118 +7,125 @@
 <style>
 
 body{
-font-family: Arial;
-background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+font-family:Arial;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
 text-align:center;
 margin:0;
-padding:0;
 }
 
-.container{
+.panel{
 background:white;
 color:black;
-width:450px;
-margin:40px auto;
-padding:30px;
-border-radius:15px;
-box-shadow:0 10px 25px rgba(0,0,0,0.3);
+padding:20px;
+margin:20px auto;
+width:420px;
+border-radius:10px;
+box-shadow:0 10px 20px rgba(0,0,0,0.3);
 }
 
 input{
 padding:10px;
-margin:8px;
-width:85%;
-border-radius:5px;
-border:1px solid #ccc;
+margin:6px;
+width:80%;
 }
 
 button{
-padding:12px 20px;
+padding:10px 16px;
 background:#27ae60;
 color:white;
 border:none;
 border-radius:6px;
 cursor:pointer;
-font-size:16px;
 }
 
-button:hover{
-background:#2ecc71;
-}
-
-.result{
-margin-top:20px;
-font-size:18px;
-}
-
-ul{
-list-style:none;
-padding:0;
-}
-
-li{
-background:#ecf0f1;
-margin:5px;
-padding:8px;
-border-radius:5px;
+.hidden{
+display:none;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<h1>CarbonQuest 🌍</h1>
-<p>Track the carbon footprint of your digital life</p>
+<h1>🌍 CarbonQuest</h1>
 
-<div class="container">
+<div id="login" class="panel">
 
-<h3>Enter Daily Usage</h3>
+<h2>Enter Username</h2>
 
-<input id="streaming" placeholder="Streaming hours"><br>
-<input id="ai" placeholder="AI queries"><br>
-<input id="cloud" placeholder="Cloud storage (GB)"><br>
-<input id="gaming" placeholder="Gaming hours"><br>
+<input id="usernameInput" placeholder="Username">
 
-<button onclick="calculate()">Calculate</button>
+<button onclick="start()">Start</button>
 
-<div class="result" id="result"></div>
+</div>
+
+<div id="dashboard" class="hidden">
+
+<div class="panel">
+
+<h3>Your Carbon Usage</h3>
+
+<input id="streaming" placeholder="Streaming hours">
+<input id="ai" placeholder="AI queries">
+<input id="cloud" placeholder="Cloud storage GB">
+<input id="gaming" placeholder="Gaming hours">
+
+<button onclick="calculate()">Submit</button>
+
+<div id="result"></div>
+
+</div>
+
+<div class="panel">
+
+<h3>Find Friends</h3>
+
+<input id="friendInput" placeholder="Friend username">
+
+<button onclick="addFriend()">Add Friend</button>
+
+<ul id="friends"></ul>
+
+</div>
+
+<div class="panel">
+
+<h3>Weekly Challenge</h3>
+
+<button onclick="startChallenge()">Start 7 Day Challenge</button>
+
+<p id="challengeStatus"></p>
+
+</div>
+
+<div class="panel">
 
 <h3>Leaderboard</h3>
-
-<input id="username" placeholder="Your name">
-
-<button onclick="addScore()">Submit Score</button>
 
 <ul id="leaderboard"></ul>
 
 </div>
 
+</div>
+
 <script>
 
-function calculate(){
+let username="";
+let scores=[];
+let friends=[];
 
-let streaming = document.getElementById("streaming").value;
-let ai = document.getElementById("ai").value;
-let cloud = document.getElementById("cloud").value;
-let gaming = document.getElementById("gaming").value;
+function start(){
 
-let carbon =
-(streaming*55) +
-(ai*4) +
-(cloud*2) +
-(gaming*75);
+username=document.getElementById("usernameInput").value;
 
-let ecoScore = Math.max(0,100-carbon/10);
-
-document.getElementById("result").innerHTML=
-"Daily Carbon: "+carbon+" g CO2<br>Eco Score: "+ecoScore;
+document.getElementById("login").style.display="none";
+document.getElementById("dashboard").classList.remove("hidden");
 
 }
-function addScore(){
 
-let name=document.getElementById("username").value;
+function calculate(){
 
 let streaming=document.getElementById("streaming").value;
 let ai=document.getElementById("ai").value;
@@ -131,7 +138,10 @@ let carbon=
 (cloud*2)+
 (gaming*75);
 
-scores.push({name:name,carbon:carbon});
+document.getElementById("result").innerHTML=
+"Your carbon today: "+carbon+" g CO2";
+
+scores.push({name:username,carbon:carbon});
 
 scores.sort((a,b)=>a.carbon-b.carbon);
 
@@ -146,8 +156,34 @@ list+="<li>"+scores[i].name+" - "+scores[i].carbon+" g CO2</li>";
 document.getElementById("leaderboard").innerHTML=list;
 
 }
-  
+
+function addFriend(){
+
+let friend=document.getElementById("friendInput").value;
+
+friends.push(friend);
+
+let list="";
+
+for(let i=0;i<friends.length;i++){
+
+list+="<li>"+friends[i]+"</li>";
+
+}
+
+document.getElementById("friends").innerHTML=list;
+
+}
+
+function startChallenge(){
+
+document.getElementById("challengeStatus").innerHTML=
+"7 Day Challenge Started! Lowest carbon wins.";
+
+}
+
 </script>
 
 </body>
+
 </html>
