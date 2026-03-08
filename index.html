@@ -9,15 +9,14 @@
 
 <style>
 
-/* GENERAL */
-
 body{
 margin:0;
 font-family:'Orbitron', monospace;
 color:white;
+background:#0f2027;
 }
 
-/* LOGIN SCREEN */
+/* LOGIN */
 
 #loginScreen{
 height:100vh;
@@ -31,34 +30,40 @@ background-position:center;
 
 .loginBox{
 text-align:center;
-background:rgba(0,0,0,0.6);
+background:rgba(0,0,0,0.7);
 padding:40px;
 border-radius:15px;
 }
 
-.loginBox input{
-padding:12px;
-font-size:16px;
-width:220px;
+input{
+padding:10px;
+margin:6px;
 border-radius:6px;
 border:none;
 }
 
-.loginBox button{
-padding:12px 20px;
-margin-top:10px;
-background:#27ae60;
+/* SCIFI BUTTONS */
+
+button{
+padding:10px 16px;
 border:none;
-border-radius:10px;
-color:white;
+border-radius:8px;
+background:#00ffa6;
+color:black;
 cursor:pointer;
+font-weight:bold;
+box-shadow:0 0 10px #00ffa6;
+}
+
+button:hover{
+box-shadow:0 0 20px #00ffa6;
+transform:scale(1.05);
 }
 
 /* DASHBOARD */
 
 #dashboard{
 display:none;
-background:#0f2027;
 min-height:100vh;
 padding:30px;
 }
@@ -70,46 +75,63 @@ left:20px;
 font-size:18px;
 }
 
+#logoutBtn{
+position:absolute;
+top:20px;
+right:20px;
+}
+
+/* GRID */
+
 .dashboardGrid{
 display:grid;
-grid-template-columns:60% 40%;
+grid-template-columns:50% 50%;
 gap:20px;
+margin-top:40px;
 }
 
 /* PANELS */
 
 .panel{
-background:white;
-color:black;
+background:#1c2b33;
 padding:20px;
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,255,166,0.3);
+}
+
+.panel h3{
+margin-top:0;
+}
+
+/* PROFILE */
+
+.profile{
+background:#1c2b33;
+padding:20px;
+border-radius:12px;
+margin-bottom:20px;
+box-shadow:0 0 15px rgba(0,255,166,0.3);
+}
+
+/* GRAPH */
+
+canvas{
+background:white;
 border-radius:10px;
-box-shadow:0 10px 20px rgba(0,0,0,0.3);
 }
 
-.panel input{
-padding:8px;
-margin:5px;
-}
-
-.panel button{
-padding:8px 14px;
-background:#27ae60;
-border:none;
-color:white;
-cursor:pointer;
-border-radius:6px;
-}
-
-/* CHALLENGE CALENDAR */
+/* CALENDAR */
 
 .calendar{
 display:grid;
 grid-template-columns:repeat(7,1fr);
 gap:5px;
+margin-top:10px;
 }
 
 .day{
 background:#ecf0f1;
+color:black;
 padding:10px;
 border-radius:6px;
 text-align:center;
@@ -123,7 +145,7 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.6);
+background:rgba(0,0,0,0.7);
 display:none;
 justify-content:center;
 align-items:center;
@@ -151,11 +173,9 @@ text-align:center;
 
 <h1>CarbonQuest</h1>
 
-<input id="usernameInput" placeholder="Username">
-<br><br>
+<input id="usernameInput" placeholder="Username"><br>
 
-<input id="passwordInput" type="password" placeholder="Password">
-<br><br>
+<input id="passwordInput" type="password" placeholder="Password"><br>
 
 <button onclick="login()">Enter</button>
 
@@ -172,19 +192,32 @@ text-align:center;
 <div id="dashboard">
 
 <div id="userDisplay"></div>
+<button id="logoutBtn" onclick="logout()">Logout</button>
 
 <h1>CarbonQuest Dashboard</h1>
 
+<!-- PLAYER PROFILE -->
+
+<div class="profile">
+
+<h3>Player Profile</h3>
+
+<div id="profileName"></div>
+<div>Total Entries: <span id="entryCount">0</span></div>
+<div>Average Carbon: <span id="avgCarbon">0</span></div>
+
+</div>
+
 <div class="dashboardGrid">
 
-<!-- LEFT SIDE -->
+<!-- LEFT -->
 
 <div class="panel">
 
 <h3>Your Digital Carbon Usage</h3>
 
 <input id="streaming" placeholder="Streaming hours"><br>
-<input id="videoCalls" placeholder="Video calls (Zoom/Meet hours)"><br>
+<input id="videoCalls" placeholder="Video calls hours"><br>
 <input id="ai" placeholder="AI queries"><br>
 <input id="searches" placeholder="Search queries"><br>
 <input id="cloud" placeholder="Cloud storage GB"><br>
@@ -195,9 +228,13 @@ text-align:center;
 
 <div id="result"></div>
 
+<br>
+
+<canvas id="carbonGraph" width="400" height="200"></canvas>
+
 </div>
 
-<!-- RIGHT SIDE -->
+<!-- RIGHT -->
 
 <div>
 
@@ -205,7 +242,7 @@ text-align:center;
 
 <h3>Friends</h3>
 
-<button onclick="openFriendPopup()">Find Friends</button>
+<button onclick="openFriendPopup()">Add Friend</button>
 
 <ul id="friends"></ul>
 
@@ -223,9 +260,9 @@ text-align:center;
 
 <h3>7 Day Challenge</h3>
 
-<button onclick="startChallenge()">Start Challenge</button>
+<button onclick="openChallenge()">Start Challenge</button>
 
-<div class="calendar" id="calendar"></div>
+<div id="challengeArea"></div>
 
 </div>
 
@@ -243,9 +280,7 @@ text-align:center;
 
 <h3>Add Friend</h3>
 
-<input id="friendInput" placeholder="Friend username">
-
-<br><br>
+<input id="friendInput" placeholder="Friend username"><br><br>
 
 <button onclick="addFriend()">Add</button>
 <button onclick="closeFriendPopup()">Close</button>
@@ -254,7 +289,7 @@ text-align:center;
 
 </div>
 
-<!-- CREATE ACCOUNT POPUP -->
+<!-- CREATE ACCOUNT -->
 
 <div class="popup" id="createPopup">
 
@@ -262,12 +297,8 @@ text-align:center;
 
 <h3>Create Account</h3>
 
-<input id="newUsername" placeholder="Create Username">
-<br><br>
-
-<input id="newPassword" type="password" placeholder="Create Password">
-
-<br><br>
+<input id="newUsername" placeholder="Username"><br>
+<input id="newPassword" type="password" placeholder="Password"><br><br>
 
 <button onclick="createAccount()">Enter</button>
 <button onclick="closeCreateAccount()">Close</button>
@@ -276,63 +307,84 @@ text-align:center;
 
 </div>
 
+<!-- CHALLENGE SELECT -->
+
+<div class="popup" id="challengePopup">
+
+<div class="popupBox">
+
+<h3>Select Friends</h3>
+
+<select id="challengeSelect"></select>
+
+<br><br>
+
+<button onclick="startChallenge()">Start</button>
+<button onclick="closeChallenge()">Close</button>
+
+</div>
+
+</div>
+
 <script>
 
 let username=""
+let users={}
 let scores=[]
 let friends=[]
-let users={}
+let history=[]
 
 /* LOGIN */
 
 function login(){
 
-let user=document.getElementById("usernameInput").value
-let pass=document.getElementById("passwordInput").value
+let user=usernameInput.value
+let pass=passwordInput.value
 
 if(users[user] && users[user]==pass){
 
 username=user
 
-document.getElementById("loginScreen").style.display="none"
-document.getElementById("dashboard").style.display="block"
+loginScreen.style.display="none"
+dashboard.style.display="block"
 
-document.getElementById("userDisplay").innerHTML="User: "+username
-
-}
-else{
-
-alert("Account not found. Create one.")
+userDisplay.innerHTML="User: "+username
+profileName.innerHTML="Name: "+username
 
 }
+else alert("Account not found")
+
+}
+
+/* LOGOUT */
+
+function logout(){
+
+dashboard.style.display="none"
+loginScreen.style.display="flex"
 
 }
 
 /* CREATE ACCOUNT */
 
-function openCreateAccount(){
-document.getElementById("createPopup").style.display="flex"
-}
-
-function closeCreateAccount(){
-document.getElementById("createPopup").style.display="none"
-}
+function openCreateAccount(){createPopup.style.display="flex"}
+function closeCreateAccount(){createPopup.style.display="none"}
 
 function createAccount(){
 
-let newUser=document.getElementById("newUsername").value
-let newPass=document.getElementById("newPassword").value
+let u=newUsername.value
+let p=newPassword.value
 
-users[newUser]=newPass
-
-username=newUser
+users[u]=p
+username=u
 
 closeCreateAccount()
 
-document.getElementById("loginScreen").style.display="none"
-document.getElementById("dashboard").style.display="block"
+loginScreen.style.display="none"
+dashboard.style.display="block"
 
-document.getElementById("userDisplay").innerHTML="User: "+username
+userDisplay.innerHTML="User: "+username
+profileName.innerHTML="Name: "+username
 
 }
 
@@ -340,65 +392,77 @@ document.getElementById("userDisplay").innerHTML="User: "+username
 
 function calculate(){
 
-let streaming=document.getElementById("streaming").value
-let videoCalls=document.getElementById("videoCalls").value
-let ai=document.getElementById("ai").value
-let searches=document.getElementById("searches").value
-let cloud=document.getElementById("cloud").value
-let gaming=document.getElementById("gaming").value
-let downloads=document.getElementById("downloads").value
-
 let carbon=
-(streaming*55)+
-(videoCalls*150)+
-(ai*4)+
-(searches*0.3)+
-(cloud*2)+
-(gaming*75)+
-(downloads*20)
+(streaming.value*55)+
+(videoCalls.value*150)+
+(ai.value*4)+
+(searches.value*0.3)+
+(cloud.value*2)+
+(gaming.value*75)+
+(downloads.value*20)
 
-document.getElementById("result").innerHTML=
-"Today's Carbon: "+carbon+" g CO2"
+result.innerHTML="Today's Carbon: "+carbon+" g CO2"
+
+history.push(carbon)
+
+updateGraph()
+updateProfile()
 
 scores.push({name:username,carbon:carbon})
-
 scores.sort((a,b)=>a.carbon-b.carbon)
 
 let list=""
+for(let i=0;i<scores.length;i++)
+list+="<li>"+scores[i].name+" - "+scores[i].carbon+"</li>"
 
-for(let i=0;i<scores.length;i++){
-
-list+="<li>"+scores[i].name+" - "+scores[i].carbon+" g</li>"
-
-}
-
-document.getElementById("leaderboard").innerHTML=list
+leaderboard.innerHTML=list
 
 }
 
-/* FRIEND SYSTEM */
+/* GRAPH */
 
-function openFriendPopup(){
-document.getElementById("friendPopup").style.display="flex"
+function updateGraph(){
+
+let canvas=document.getElementById("carbonGraph")
+let ctx=canvas.getContext("2d")
+
+ctx.clearRect(0,0,400,200)
+
+for(let i=0;i<history.length;i++){
+
+let x=i*50
+let y=200-history[i]/5
+
+ctx.fillRect(x,y,30,history[i]/5)
+
 }
 
-function closeFriendPopup(){
-document.getElementById("friendPopup").style.display="none"
 }
+
+/* PROFILE */
+
+function updateProfile(){
+
+entryCount.innerHTML=history.length
+
+let total=0
+for(let c of history) total+=c
+
+avgCarbon.innerHTML=Math.round(total/history.length)
+
+}
+
+/* FRIENDS */
+
+function openFriendPopup(){friendPopup.style.display="flex"}
+function closeFriendPopup(){friendPopup.style.display="none"}
 
 function addFriend(){
 
-let friend=document.getElementById("friendInput").value
-
-friends.push(friend)
+friends.push(friendInput.value)
 
 let list=""
-
-for(let i=0;i<friends.length;i++){
-
-list+="<li>"+friends[i]+"</li>"
-
-}
+friends.forEach(f=>list+="<li>"+f+"</li>")
 
 document.getElementById("friends").innerHTML=list
 
@@ -408,17 +472,47 @@ closeFriendPopup()
 
 /* CHALLENGE */
 
-function startChallenge(){
+function openChallenge(){
 
-let calendar=""
+let select=document.getElementById("challengeSelect")
 
-for(let i=1;i<=7;i++){
+select.innerHTML=""
 
-calendar+="<div class='day'>Day "+i+"</div>"
+friends.forEach(f=>{
+select.innerHTML+="<option>"+f+"</option>"
+})
+
+challengePopup.style.display="flex"
 
 }
 
-document.getElementById("calendar").innerHTML=calendar
+function closeChallenge(){
+challengePopup.style.display="none"
+}
+
+function startChallenge(){
+
+let friend=challengeSelect.value
+
+challengePopup.style.display="none"
+
+let players=[username,friend]
+
+let html=""
+
+players.forEach(p=>{
+
+html+="<h4>"+p+"</h4>"
+html+="<div class='calendar'>"
+
+for(let i=1;i<=7;i++)
+html+="<div class='day'>Day "+i+"</div>"
+
+html+="</div><br>"
+
+})
+
+challengeArea.innerHTML=html
 
 }
 
