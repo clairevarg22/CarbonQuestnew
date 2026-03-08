@@ -8,37 +8,60 @@
 
 body{
 font-family: Arial;
-background:#f2f6f5;
+background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
 text-align:center;
+margin:0;
+padding:0;
 }
 
 .container{
 background:white;
-width:420px;
-margin:auto;
-padding:20px;
-border-radius:10px;
-box-shadow:0px 4px 10px rgba(0,0,0,0.1);
+color:black;
+width:450px;
+margin:40px auto;
+padding:30px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
 
 input{
-padding:8px;
-margin:6px;
-width:80%;
+padding:10px;
+margin:8px;
+width:85%;
+border-radius:5px;
+border:1px solid #ccc;
 }
 
 button{
-padding:10px 16px;
-background:#2e8b57;
+padding:12px 20px;
+background:#27ae60;
 color:white;
 border:none;
 border-radius:6px;
 cursor:pointer;
+font-size:16px;
+}
+
+button:hover{
+background:#2ecc71;
 }
 
 .result{
 margin-top:20px;
 font-size:18px;
+}
+
+ul{
+list-style:none;
+padding:0;
+}
+
+li{
+background:#ecf0f1;
+margin:5px;
+padding:8px;
+border-radius:5px;
 }
 
 </style>
@@ -89,42 +112,41 @@ let carbon =
 
 let ecoScore = Math.max(0,100-carbon/10);
 
-document.getElementById("result").innerHTML =
-"Daily Carbon: " + carbon + " g CO2<br>" +
-"Eco Score: " + ecoScore;
+document.getElementById("result").innerHTML=
+"Daily Carbon: "+carbon+" g CO2<br>Eco Score: "+ecoScore;
 
 }
-let scores = [];
-
 function addScore(){
 
-let name = document.getElementById("username").value;
+let name=document.getElementById("username").value;
 
-let streaming = document.getElementById("streaming").value;
-let ai = document.getElementById("ai").value;
-let cloud = document.getElementById("cloud").value;
-let gaming = document.getElementById("gaming").value;
+let streaming=document.getElementById("streaming").value;
+let ai=document.getElementById("ai").value;
+let cloud=document.getElementById("cloud").value;
+let gaming=document.getElementById("gaming").value;
 
-let carbon =
-(streaming*55) +
-(ai*4) +
-(cloud*2) +
+let carbon=
+(streaming*55)+
+(ai*4)+
+(cloud*2)+
 (gaming*75);
 
-scores.push({name:name, carbon:carbon});
+scores.push({name:name,carbon:carbon});
 
 scores.sort((a,b)=>a.carbon-b.carbon);
 
-let list = "";
+let list="";
 
 for(let i=0;i<scores.length;i++){
-list += "<li>" + scores[i].name + " - " + scores[i].carbon + " g CO2</li>";
-}
 
-document.getElementById("leaderboard").innerHTML = list;
+list+="<li>"+scores[i].name+" - "+scores[i].carbon+" g CO2</li>";
 
 }
 
+document.getElementById("leaderboard").innerHTML=list;
+
+}
+  
 </script>
 
 </body>
