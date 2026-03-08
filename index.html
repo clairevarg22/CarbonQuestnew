@@ -1,525 +1,480 @@
 <!DOCTYPE html>
 <html>
-
 <head>
+<title>Carbon Tracker</title>
 
-<title>CarbonQuest</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Audiowide&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Rajdhani&display=swap" rel="stylesheet">
 
 <style>
 
 body{
-margin:0;
-font-family:'Orbitron',sans-serif;
-background:#0f2027;
+background:#0b0f1c;
 color:white;
+font-family:Rajdhani;
+margin:0;
 }
 
-#loginScreen{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background-image:url("https://images.unsplash.com/photo-1446776811953-b23d57bd21aa");
-background-size:cover;
-}
-
-.loginBox{
-background:rgba(0,0,0,0.8);
-padding:40px;
-border-radius:14px;
-text-align:center;
+h1,h2,h3{
+font-family:Orbitron;
 }
 
 button{
-padding:10px 16px;
+background:#00c3ff;
 border:none;
-border-radius:8px;
-background:#00ffa6;
-color:black;
+padding:10px 15px;
+border-radius:6px;
 cursor:pointer;
-font-weight:bold;
+font-family:Orbitron;
+}
+
+button:hover{
+background:#009ad1;
+}
+
+input,select{
+padding:8px;
 margin:5px;
 }
 
-#dashboard{
+.page{
 display:none;
-padding:30px;
-max-width:1200px;
-margin:auto;
+padding:25px;
 }
 
-#logoutBtn{
-position:absolute;
-top:20px;
-right:20px;
+#loginPage{
+display:block;
+text-align:center;
+margin-top:150px;
 }
 
-.dashboardGrid{
+.dashboard{
 display:grid;
-grid-template-columns:1fr 1fr;
-gap:30px;
+grid-template-columns:repeat(2,200px);
+gap:15px;
 margin-top:30px;
 }
 
-.panel{
-background:#1c2b33;
-padding:25px;
-border-radius:12px;
-}
-
-.profile{
-background:#1c2b33;
+.card{
+background:#111831;
 padding:20px;
-border-radius:12px;
-margin-bottom:20px;
-}
-
-.calcRow{
-margin-bottom:12px;
-}
-
-.calcRow label{
-font-size:12px;
-color:#00ffa6;
-display:block;
-}
-
-.calcInput{
-width:100%;
-padding:8px;
-border-radius:6px;
-border:none;
-}
-
-.calendar{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:6px;
-margin-top:10px;
-}
-
-.day{
-background:#ecf0f1;
-color:black;
-padding:10px;
-border-radius:6px;
-font-size:11px;
-text-align:center;
-}
-
-.popup{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.8);
-display:none;
-justify-content:center;
-align-items:center;
-}
-
-.popupBox{
-background:#0f2027;
-border:2px solid #00ffa6;
-padding:30px;
 border-radius:10px;
 }
 
-.badge{
-display:inline-block;
-background:#00ffa6;
-color:black;
-padding:6px 10px;
+.challengeGrid{
+display:grid;
+grid-template-columns:120px repeat(7,70px);
+gap:5px;
+margin-top:20px;
+}
+
+.dayBox{
+background:#18234b;
+padding:10px;
+text-align:center;
 border-radius:6px;
-margin:4px;
-font-size:12px;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+}
+
+.friendList{
+margin-top:10px;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<!-- LOGIN PAGE -->
+<div id="loginPage">
 
-<div id="loginScreen">
+<h1>Carbon Tracker</h1>
 
-<div class="loginBox">
+<input id="loginUser" placeholder="Username">
+<br>
 
-<h1>CarbonQuest</h1>
-
-<input id="usernameInput" placeholder="Username"><br>
-<input id="passwordInput" type="password" placeholder="Password"><br><br>
-
-<button onclick="login()">Login</button><br><br>
-
-<button onclick="openCreateAccount()">Create Account</button>
+<button onclick="openCreate()">Create Account</button>
 
 </div>
 
+
+<!-- CREATE ACCOUNT POPUP -->
+<div id="createPopup" style="display:none; position:fixed; top:30%; left:40%; background:#111831; padding:20px; border-radius:10px;">
+
+<h3>Create Account</h3>
+
+<input id="newUser" placeholder="Username">
+<br>
+<button onclick="createAccount()">Create</button>
+
 </div>
+
+
 
 <!-- DASHBOARD -->
+<div id="dashboardPage" class="page">
 
-<div id="dashboard">
+<div class="topbar">
+<h2 id="welcome"></h2>
+<button onclick="logout()">Logout</button>
+</div>
 
-<button id="logoutBtn" onclick="logout()">Logout</button>
+<div class="dashboard">
 
-<h1>CarbonQuest Dashboard</h1>
+<button onclick="showCalculator()">Carbon Calculator</button>
 
-<div class="profile">
+<button onclick="showChallenge()">7 Day Challenge</button>
 
-<h3 id="profileName"></h3>
+<button onclick="showLeaderboard()">Leaderboard</button>
 
-<div>XP: <span id="xp">0</span></div>
-<div>Level: <span id="level">1</span></div>
-
-<h4 style="cursor:pointer" onclick="openAchievements()">Achievements</h4>
-
-<div id="badges"></div>
+<button onclick="showAchievements()">Achievements</button>
 
 </div>
 
-<div class="dashboardGrid">
+</div>
+
+
 
 <!-- CALCULATOR -->
+<div id="calcPage" class="page">
 
-<div class="panel">
+<h2>Carbon Calculator</h2>
 
-<h3>Digital Carbon Calculator</h3>
+<div class="card">
 
-<div class="calcRow">
-<label>Streaming Hours (≈55g CO2/hr)</label>
-<input class="calcInput" id="streaming">
-</div>
+<label>Electricity (kWh)</label>
+<input id="electricity">
+<span>≈ 0.85 lb CO2 per kWh</span>
 
-<div class="calcRow">
-<label>Video Calls (≈150g CO2/hr)</label>
-<input class="calcInput" id="videoCalls">
-</div>
+<br>
 
-<div class="calcRow">
-<label>AI Queries (≈4g per query)</label>
-<input class="calcInput" id="ai">
-</div>
+<label>Car Miles</label>
+<input id="miles">
+<span>≈ 0.89 lb CO2 per mile</span>
 
-<div class="calcRow">
-<label>Cloud Storage (≈2g per GB)</label>
-<input class="calcInput" id="cloud">
-</div>
+<br>
 
-<div class="calcRow">
-<label>Gaming (≈75g CO2/hr)</label>
-<input class="calcInput" id="gaming">
-</div>
+<label>Flights (hours)</label>
+<input id="flight">
+<span>≈ 250 lb CO2 per hour</span>
 
-<button onclick="calculate()">Calculate</button>
+<br>
 
-<div id="result"></div>
+<button onclick="calculateCarbon()">Calculate</button>
 
 </div>
 
-<!-- RIGHT PANEL -->
+<h3 id="carbonResult"></h3>
 
-<div>
-
-<div class="panel">
-
-<h3>Friends</h3>
-
-<button onclick="openFriendPopup()">Add Friend</button>
-
-<ul id="friends"></ul>
+<button onclick="back()">Back</button>
 
 </div>
 
-<div class="panel">
 
-<h3>Global Leaderboard</h3>
 
-<ul id="leaderboard"></ul>
+<!-- CHALLENGE -->
+<div id="challengePage" class="page">
 
-</div>
+<h2>7 Day Challenge</h2>
 
-<div class="panel">
+<button onclick="openFriends()">Add Friends</button>
 
-<h3>7 Day Challenge</h3>
+<div id="friendSelector" class="friendList"></div>
 
-<button onclick="openChallenge()">Start Challenge</button>
+<div id="challengeBoard"></div>
+
 <button onclick="endChallenge()">End Challenge</button>
-
-<div id="challengeArea"></div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- POPUPS -->
-
-<div class="popup" id="friendPopup">
-<div class="popupBox">
-
-<h3>Add Friend</h3>
-
-<input id="friendInput"><br><br>
-
-<button onclick="addFriend()">Add</button>
-<button onclick="closeFriendPopup()">Close</button>
-
-</div>
-</div>
-
-<div class="popup" id="challengePopup">
-<div class="popupBox">
-
-<h3>Select Friends</h3>
-
-<select id="challengeSelect" multiple size="5"></select>
 
 <br><br>
 
-<button onclick="startChallenge()">Start</button>
-<button onclick="closeChallenge()">Close</button>
+<button onclick="back()">Back</button>
 
 </div>
+
+
+
+<!-- LEADERBOARD -->
+<div id="leaderboardPage" class="page">
+
+<h2>Global Leaderboard</h2>
+
+<ol id="leaderboardList"></ol>
+
+<button onclick="back()">Back</button>
+
 </div>
 
-<div class="popup" id="achievementsPopup">
-<div class="popupBox">
 
-<h3>All Achievements</h3>
 
-<p>First Entry</p>
-<p>Eco Starter</p>
-<p>Carbon Tracker</p>
+<!-- ACHIEVEMENTS -->
+<div id="achievementPage" class="page">
 
-<button onclick="closeAchievements()">Close</button>
+<h2>Achievements</h2>
+
+<ul>
+<li>🌱 First Entry</li>
+<li>🔥 7 Day Challenge Completed</li>
+<li>🏆 Top 10 Leaderboard</li>
+<li>⚡ Level 5 Carbon Saver</li>
+</ul>
+
+<button onclick="back()">Back</button>
 
 </div>
-</div>
+
 
 <script>
 
-let users=JSON.parse(localStorage.getItem("users"))||{}
-let leaderboardData=JSON.parse(localStorage.getItem("leaderboard"))||[]
+let accounts={}
+let currentUser=null
 
-let username=""
-let xp=0
-let level=1
-let history=[]
-let badges=[]
-let friendsList=[]
+let leaderboard=[]
 
-function resetUser(){
+let friends=["Friend1","Friend2","Friend3"]
 
-xp=0
-level=1
-history=[]
-badges=[]
-friendsList=[]
+let challengeActive=false
+let challengePlayers=[]
+let challengeData={}
 
-document.getElementById("xp").innerText=0
-document.getElementById("level").innerText=1
-document.getElementById("badges").innerHTML=""
-document.getElementById("friends").innerHTML=""
-
+document.getElementById("loginUser").addEventListener("keypress",function(e){
+if(e.key==="Enter"){
+login()
 }
+})
 
 function login(){
 
-let u=usernameInput.value
-let p=passwordInput.value
+let name=document.getElementById("loginUser").value
 
-if(users[u] && users[u]==p){
-
-username=u
-
-resetUser()
-
-loginScreen.style.display="none"
-dashboard.style.display="block"
-
-profileName.innerText="Player: "+username
-
-loadLeaderboard()
+if(accounts[name]){
+currentUser=name
+startUser()
+}
 
 }
+
+function createAccount(){
+
+let name=document.getElementById("newUser").value
+
+accounts[name]={carbon:0}
+
+currentUser=name
+
+document.getElementById("createPopup").style.display="none"
+
+startUser()
+
+}
+
+function openCreate(){
+document.getElementById("createPopup").style.display="block"
+}
+
+function startUser(){
+
+document.getElementById("loginPage").style.display="none"
+document.getElementById("dashboardPage").style.display="block"
+
+document.getElementById("welcome").innerText="Welcome "+currentUser
+
+challengeActive=false
+challengePlayers=[]
+challengeData={}
 
 }
 
 function logout(){
 
-dashboard.style.display="none"
-loginScreen.style.display="flex"
+currentUser=null
+
+document.getElementById("dashboardPage").style.display="none"
+document.getElementById("loginPage").style.display="block"
 
 }
 
-function calculate(){
+function showCalculator(){
+switchPage("calcPage")
+}
 
-let carbon=
-(streaming.value*55)+
-(videoCalls.value*150)+
-(ai.value*4)+
-(cloud.value*2)+
-(gaming.value*75)
+function showChallenge(){
+switchPage("challengePage")
+}
 
-result.innerText="Today's Carbon: "+carbon+" g CO2"
+function showLeaderboard(){
+switchPage("leaderboardPage")
+renderLeaderboard()
+}
 
-history.push(carbon)
+function showAchievements(){
+switchPage("achievementPage")
+}
 
-xp+=10
-updateLevel()
-checkAchievements()
+function switchPage(page){
 
-leaderboardData.push({name:username,carbon:carbon})
+document.querySelectorAll(".page").forEach(p=>p.style.display="none")
 
-leaderboardData.sort((a,b)=>a.carbon-b.carbon)
-
-localStorage.setItem("leaderboard",JSON.stringify(leaderboardData))
-
-loadLeaderboard()
+document.getElementById(page).style.display="block"
 
 }
 
-function updateLevel(){
+function back(){
 
-level=Math.floor(xp/50)+1
+document.querySelectorAll(".page").forEach(p=>p.style.display="none")
 
-document.getElementById("xp").innerText=xp
-document.getElementById("level").innerText=level
-
-}
-
-function checkAchievements(){
-
-if(history.length==1)addBadge("First Entry")
-
-if(history.length==5)addBadge("Eco Starter")
-
-if(history.length==10)addBadge("Carbon Tracker")
+document.getElementById("dashboardPage").style.display="block"
 
 }
 
-function addBadge(name){
+function calculateCarbon(){
 
-if(badges.includes(name))return
+let e=document.getElementById("electricity").value*0.85
+let m=document.getElementById("miles").value*0.89
+let f=document.getElementById("flight").value*250
 
-badges.push(name)
+let total=Math.round(e+m+f)
 
-document.getElementById("badges").innerHTML+=
-"<span class='badge'>"+name+"</span>"
+document.getElementById("carbonResult").innerText="Today's Carbon: "+total+" lbs"
+
+accounts[currentUser].carbon=total
+
+updateLeaderboard(total)
+
+if(challengeActive){
+logChallenge(total)
+}
 
 }
 
-function loadLeaderboard(){
+function updateLeaderboard(score){
 
-let list=""
+leaderboard.push({user:currentUser,score:score})
 
-leaderboardData.slice(0,10).forEach(p=>{
-list+="<li>"+p.name+" - "+p.carbon+"</li>"
+leaderboard.sort((a,b)=>a.score-b.score)
+
+leaderboard=leaderboard.slice(0,10)
+
+}
+
+function renderLeaderboard(){
+
+let list=document.getElementById("leaderboardList")
+list.innerHTML=""
+
+leaderboard.forEach(l=>{
+let li=document.createElement("li")
+li.innerText=l.user+" - "+l.score
+list.appendChild(li)
 })
 
-leaderboard.innerHTML=list
-
 }
 
-/* FRIENDS */
+function openFriends(){
 
-function openFriendPopup(){
-friendPopup.style.display="flex"
-}
+let box=document.getElementById("friendSelector")
+box.innerHTML=""
 
-function closeFriendPopup(){
-friendPopup.style.display="none"
-}
+friends.forEach(f=>{
 
-function addFriend(){
+let cb=document.createElement("input")
+cb.type="checkbox"
+cb.value=f
 
-let f=friendInput.value
+box.appendChild(cb)
+box.appendChild(document.createTextNode(f))
+box.appendChild(document.createElement("br"))
 
-friendsList.push(f)
-
-let list=""
-
-friendsList.forEach(friend=>{
-list+="<li>"+friend+"</li>"
 })
 
-friends.innerHTML=list
+let start=document.createElement("button")
+start.innerText="Start Challenge"
+start.onclick=startChallenge
 
-friendInput.value=""
+box.appendChild(start)
 
-closeFriendPopup()
-
-}
-
-/* CHALLENGE */
-
-function openChallenge(){
-
-challengeSelect.innerHTML=""
-
-friendsList.forEach(f=>{
-challengeSelect.innerHTML+="<option>"+f+"</option>"
-})
-
-challengePopup.style.display="flex"
-
-}
-
-function closeChallenge(){
-challengePopup.style.display="none"
 }
 
 function startChallenge(){
 
-let players=[username,...[...challengeSelect.selectedOptions].map(o=>o.value)]
+challengePlayers=[currentUser]
 
-let html=""
+document.querySelectorAll("#friendSelector input").forEach(cb=>{
+if(cb.checked)challengePlayers.push(cb.value)
+})
 
-let today=new Date()
+challengePlayers.forEach(p=>{
+challengeData[p]=[0,0,0,0,0,0,0]
+})
 
-players.forEach(p=>{
+challengeActive=true
 
-html+="<h4>"+p+"</h4><div class='calendar'>"
+renderChallenge()
+
+}
+
+function renderChallenge(){
+
+let board=document.getElementById("challengeBoard")
+board.innerHTML=""
+
+let grid=document.createElement("div")
+grid.className="challengeGrid"
+
+grid.appendChild(document.createElement("div"))
 
 for(let i=0;i<7;i++){
 
 let d=new Date()
-d.setDate(today.getDate()+i)
+d.setDate(d.getDate()+i)
 
-html+="<div class='day'>"+d.toLocaleDateString()+"<br>-</div>"
+let box=document.createElement("div")
+box.className="dayBox"
+box.innerText=d.getMonth()+1+"/"+d.getDate()
+
+grid.appendChild(box)
 
 }
 
-html+="</div><br>"
+challengePlayers.forEach(p=>{
+
+let name=document.createElement("div")
+name.innerText=p
+grid.appendChild(name)
+
+challengeData[p].forEach(v=>{
+let cell=document.createElement("div")
+cell.className="dayBox"
+cell.innerText=v||"-"
+grid.appendChild(cell)
+})
 
 })
 
-challengeArea.innerHTML=html
+board.appendChild(grid)
 
-challengePopup.style.display="none"
+}
+
+function logChallenge(value){
+
+let day=new Date().getDay()%7
+
+challengeData[currentUser][day]=value
+
+renderChallenge()
 
 }
 
 function endChallenge(){
-challengeArea.innerHTML=""
-}
 
-function openAchievements(){
-achievementsPopup.style.display="flex"
-}
+challengeActive=false
+challengePlayers=[]
+challengeData={}
 
-function closeAchievements(){
-achievementsPopup.style.display="none"
+document.getElementById("challengeBoard").innerHTML=""
+
 }
 
 </script>
